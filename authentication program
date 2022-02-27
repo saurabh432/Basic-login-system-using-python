@@ -1,0 +1,107 @@
+import hashlib
+# defining function that returns the hashed value
+def hashMD5(string):
+    hashvalue = hashlib.md5()
+    hashvalue = hashvalue.hexdigest()
+    return hashvalue
+
+# defining the function that verifies the password with the original password(both in hashed form)
+def verifypassword(string, hashvalue):
+    if hashMD5(str(string)) == hashvalue:
+         return True
+    else:
+         return False
+
+#defining the function that feeds user's name & hash value of password to the file
+def regis(login, password):
+    login=str(login)
+    password = hashMD5(str(password))    
+    file = open("users.txt",'a')
+    file.write("\n"+login+"\n"+password)
+    file.close()
+
+print("\n USER'S PAGE REGISTRATION/LOGIN \n")
+print("ONE STEP AWAY FROM THIS EXICTING PAGE JOURNEY\n")
+print("REGISTER, If you are a new user")
+print("LOGIN, If you have already registered")
+
+# defining the function that will authenticate the user
+# function will also help login to the page if user is autheticated to be genuine 
+def loginfunc():
+    # taking username and password as input from user
+    name = input("\n Enter your username: ")+"\n"
+    password = input("Enter your password: ")
+    with open("users.txt", 'r') as users:
+        logindata = users.readlines()
+        if name in logindata:
+            pos = logindata.index(name)
+            if pos % 2 != 0:
+                if verifypassword(password, logindata[int(pos)+1].replace("\n", '')):
+                    print("\nLogin Succesfully\n")
+                    print("\nWelcome  to the page ",name,"\n")
+                    print("\nPress 0 to LOGOUT.\n")   
+                    ch2=int(input())
+                    if ch2==0:
+                        exit()
+                else:
+                    print("\nInvalid login details\n")
+                    print("\nPress 1 to Register again\n")
+                    ch = int(input())
+                    if ch==1:
+                        regfunc()
+                    else: 
+                        print("THANK YOU ")
+            else:
+                print("\nInvalid login details\n")
+                print("\nPress 1 to Register Again\n")
+                ch=int(input())
+                if(ch==1):
+                    regfunc()
+                else:
+                    print("THANK YOU")
+        else:
+            print("\nInvalid login details\n")
+            print("\nPress 1 to Register Again\n")
+            ch=int(input())
+            if(ch==1):
+                regfunc()
+            else:
+                print("THANK YOU")
+
+# defining the function that registers the user for the page
+def regfunc():
+    name = input("\nEnter your UserName: ")
+    password = input("Choose Password: ")
+    passconf = input("Confirm Password: ")
+
+    if password == passconf:
+        try:
+            regis(name, password)
+            print("\nCongratulations", name, ".... You Have Successfully Registered for the page\n")
+
+        except:
+            print("\n Failed to Register, Please try again\n")
+    else:
+        print("CONFIRM PASSWORD NOT MATCHING , Please try again\n")
+        print("\nPress 1 to Register Again\n")
+        ch=int(input())
+        if(ch==1):
+            regfunc()
+        else:
+            print("THANK YOU")
+
+
+if __name__=='__main__':
+     print('''
+
+      -> PRESS 1 TO REGISTER 
+                OR
+      -> PRESS 2 TO LOGIN
+
+            ''')     
+     op = int(input("-> "))
+
+     if op == 1:
+         regfunc()
+     else:
+        loginfunc()
